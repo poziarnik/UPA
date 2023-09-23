@@ -1,6 +1,15 @@
 # UPA
 
-access running cassandra container:
-    `podman exec -it cassandra_container bash`
+## Implementation informtation
+- container name, compose file name and directory name for the database must be the same!
 
-$ pip install cassandra-driver
+## Usage
+If you don't want to install requirements to your global ones, run: 
+```console
+$ make venv
+```
+
+To run specific database within the venv:
+```console
+$ make run-{mongo,influx,cassandra,neo4j}
+```
