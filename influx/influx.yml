@@ -1,0 +1,14 @@
+version: '3'
+services:
+  influxdb:
+    image: docker.io/influxdb:latest
+    container_name: influx
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=root
+      - DOCKER_INFLUXDB_INIT_PASSWORD=d04aa3c4-5a2d-11ee-9861-00155d21872d
+      - DOCKER_INFLUXDB_INIT_ORG=influx-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=influx-bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=2e46009c-5a2c-11ee-a5a7-00155d21872d
+    ports:
+      - 8086:8086

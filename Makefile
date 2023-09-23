@@ -12,3 +12,12 @@ venv:
 
 run-mongo:
 	$(call run,"mongo")
+
+run-influx:
+	$(call run,"influx")
+
+run-cassandra:
+	$(call run,"cassandra")
+
+run-neo4j:
+	$(call run,"neo4j")

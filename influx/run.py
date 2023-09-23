@@ -1,0 +1,5 @@
+from influxdb_client import InfluxDBClient
+
+
+client = InfluxDBClient(url=f"http://localhost:8086", token="2e46009c-5a2c-11ee-a5a7-00155d21872d")
+print(client.ready())
