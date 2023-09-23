@@ -1,8 +1,8 @@
 ACTIVATE=. venv/bin/activate
 
 define run
-	podman-compose --file $(1)/$(1).yml up -d
-	$(ACTIVATE) && python3 $(1)/run.py
+	podman-compose --file databases/$(1).yml up -d
+	$(ACTIVATE) && python3 run.py $(1)
 	podman stop $(1)
 endef
 
@@ -11,13 +11,13 @@ venv:
 	$(ACTIVATE) && pip3 install -r requirements.txt
 
 run-mongo:
-	$(call run,"mongo")
+	$(call run,mongo)
 
 run-influx:
-	$(call run,"influx")
+	$(call run,influx)
 
 run-cassandra:
-	$(call run,"cassandra")
+	$(call run,cassandra)
 
 run-neo4j:
-	$(call run,"neo4j")
+	$(call run,neo4j)
