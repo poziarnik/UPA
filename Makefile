@@ -3,6 +3,7 @@ ACTIVATE=. venv/bin/activate
 define run
 	podman-compose --file $(1)/$(1).yml up -d
 	$(ACTIVATE) && python3 $(1)/run.py
+	podman stop $(1)
 endef
 
 venv:

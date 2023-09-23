@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 HOSTNAME = "localhost"
-PORT = 8081
+PORT = 27017
 USERNAME = "root"
 PASSWORD = "root"
 
