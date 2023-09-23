@@ -2,14 +2,9 @@ version: '3'
 services:
   mongodb:
     image: docker.io/mongo:latest
-    container_name: mongodb
+    container_name: mongo
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
     ports:
-      - 8081:8081
-    volumes:
-      - mongodb_volume:/var/lib/db:rw
-
-volumes:
-  mongodb_volume:
+      - 27017:27017
