@@ -1,6 +1,6 @@
 from time import sleep
 
-from haversine import haversine
+from haversine import Unit, haversine
 from neo4j import Driver, GraphDatabase
 from neo4j.exceptions import ServiceUnavailable
 from tqdm import tqdm
@@ -44,6 +44,12 @@ class Neo4jDataSet(DataSet):
         self.driver.close()
 
     def process_data(self) -> None:
+        # self.__add_stop("Cervinkova", 0, "12", 1)
+        # self.__add_stop("Skacelova", 1, "12", 1)
+        # self.__add_stop("Cervinkova", 1, "12", 0)
+        # self.__add_stop("Skacelova", 0, "12", 0)
+        # self.__add_stop("Skacelova", 0, "44", 5)
+
         # download public transport stops and routes
         mhd_stops = download_geojson(
             "https://data.brno.cz/datasets/mestobrno::zast%C3%A1vky-mhd-public-transport-stops.geojson?where=1=1&outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
@@ -63,10 +69,14 @@ class Neo4jDataSet(DataSet):
             )
         ):
             index = 0
+            stops = set()
             for stop_name, stop_coord in find_in_json_object(
                 mhd_stops["features"], "properties.stop_name", "geometry.coordinates"
             ):
                 for coord in route_coord[0]:
-                    if haversine(coord, stop_coord) <= 0.02:
-                        index += 1
+                    if (stop_name not in stops) and haversine(
+                        coord, stop_coord, Unit.METERS
+                    ) <= 10:
+                        stops.add(stop_name)
                         self.__add_stop(stop_name, index, vehicle_name, vehicle_id)
+                        index += 1
