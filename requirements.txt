@@ -4,3 +4,5 @@ cassandra-driver
 neo4j
 requests
 isort
+haversine
+jmespath
