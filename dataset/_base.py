@@ -29,7 +29,6 @@ def find_in_json_object(
     """
     # construct expression
     expression = f"[{', '.join(expression_paths)}]"
-    print(expression)
     if isinstance(json_obj, list):
         expression = f"[*].{expression}"
 

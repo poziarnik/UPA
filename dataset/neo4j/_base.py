@@ -1,10 +1,6 @@
-from operator import itemgetter
-from pprint import pprint
 from time import sleep
-from typing import Any, Iterator
+from typing import Any
 
-import pandas as pd
-from haversine import haversine
 from neo4j import Driver, GraphDatabase
 from neo4j.exceptions import ServiceUnavailable
 
@@ -51,9 +47,9 @@ class Neo4jDataSet(DataSet):
 
         # create stop entities
         stop_entities = [
-            f"(s:Stop {{name:'{ result[0] }'}})"
+            f"(:Stop {{name:'{ result[0] }'}})"
             for result in find_in_json_object(
-                mhd_stops, "features[*].properties.stop_name"
+                mhd_stops["features"], "properties.stop_name"
             )
         ]
 
@@ -62,7 +58,7 @@ class Neo4jDataSet(DataSet):
 
         # create vehicle entities
         vehicle_entities = [
-            f"(v:Vehicle {{name:'{ result[1] }-{ result[0] }', type:'{ result[2] }'}})"
+            f"(:Vehicle {{ID: '{ result[0] }', name:'{ result[1] }', type:'{ result[2] }'}})"
             for result in find_in_json_object(
                 mhd_routes["features"],
                 *[f"properties.{key}" for key in ("ID", "naz_linky", "typ")],
@@ -70,7 +66,6 @@ class Neo4jDataSet(DataSet):
         ]
 
         create_vehicle_query = f"CREATE\n\t" + ",\n\t".join(vehicle_entities)
-        print(create_vehicle_query)
         self.__run_cypher_query(create_vehicle_query)
 
         # def data_generator() -> Iterator[tuple]:
