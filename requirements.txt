@@ -1,6 +1,6 @@
 pymongo
-influxdb-client
-cassandra-driver
+influxdb - client
+cassandra - driver
 neo4j
-shapely
 requests
+isort

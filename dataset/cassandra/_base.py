@@ -1,6 +1,9 @@
-from .. import DataSet
-from cassandra.cluster import Cluster, Session, NoHostAvailable, DriverException
 from time import sleep
+
+from cassandra.cluster import (Cluster, DriverException, NoHostAvailable,
+                               Session)
+
+from .. import DataSet
 
 
 def connect() -> Session:

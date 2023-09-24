@@ -4,7 +4,7 @@
 - container name, compose file name and directory name for the database must be the same!
 
 ## Usage
-If you don't want to install requirements to your global ones, run: 
+If you don't want to install requirements to your global ones, run:
 ```console
 $ make venv
 ```

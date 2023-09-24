@@ -1,5 +1,6 @@
-from .. import DataSet
 from influxdb_client import InfluxDBClient
+
+from .. import DataSet
 
 
 class InfluxDataSet(DataSet):

@@ -1,5 +1,6 @@
-from .. import DataSet
 from pymongo import MongoClient
+
+from .. import DataSet
 
 HOSTNAME = "localhost"
 PORT = 27017

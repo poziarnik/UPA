@@ -1,10 +1,13 @@
-from .. import DataSet
-from neo4j import GraphDatabase, Driver
-from neo4j.exceptions import ServiceUnavailable
+from operator import itemgetter
+from pprint import pprint
 from time import sleep
-from shapely.geometry import Point, LineString
-from typing import List, Tuple
+
+import pandas as pd
 import requests
+from neo4j import Driver, GraphDatabase
+from neo4j.exceptions import ServiceUnavailable
+
+from .. import DataSet
 
 
 def connect(driver: Driver):
@@ -21,32 +24,33 @@ def connect(driver: Driver):
 
 class Neo4jDataSet(DataSet):
     def __init__(self) -> None:
-        #self.original_data
-        #self.driver = GraphDatabase.driver("bolt://localhost:7687")
-        #connect(self.driver)
-#
-        #with self.driver.session() as session:
-        #    databases = session.run("SHOW DATABASES")
-        #    for record in databases:
-        #        print(record["name"])
-#
-        #self.driver.close()
-        self.download_original_dataset()
-    
-    def download_original_dataset(self):
-        response = requests.get("https://data.brno.cz/datasets/mestobrno::zast%C3%A1vky-mhd-public-transport-stops.geojson?where=1=1&outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D")
-        
-        if response.status_code == 200:
-            data = response.content
-            print(data)
-            
+        self.driver = GraphDatabase.driver("bolt://localhost:7687")
+        connect(self.driver)
 
-    def is_stop_on_route(self, route_coordinates : List[Tuple[int, int]], stop_coordinates : Tuple[int, int]) -> bool: 
-        bus_route = LineString(route_coordinates) 
-        bus_stop = Point(stop_coordinates[0], stop_coordinates[1])
+        with self.driver.session() as session:
+            databases = session.run("SHOW DATABASES")
+            for record in databases:
+                print(record["name"])
 
-        if bus_route.intersects(bus_stop):
-            return True
-        
-        return False
+    def close(self) -> None:
+        self.driver.close()
 
+    def process_data(self) -> None:
+        # download MHD stops in geojson format
+        response = requests.get(
+            "https://data.brno.cz/datasets/mestobrno::zast%C3%A1vky-mhd-public-transport-stops.geojson?where=1=1&outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
+        )
+
+        if response.status_code != 200:
+            raise RuntimeError("Unable to download data!")
+
+        # columns names from the dataset
+        columns = ("stop_name", "latitude", "longitude")
+
+        data = (
+            itemgetter(*columns)(feature["properties"])
+            for feature in response.json()["features"]
+        )
+
+        mhd_stops = pd.DataFrame(data, columns=columns)
+        pprint(mhd_stops)

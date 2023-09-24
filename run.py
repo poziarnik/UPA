@@ -1,12 +1,7 @@
 from sys import argv
-from dataset import (
-    MongoDataSet,
-    InfluxDataSet,
-    CassandraDataSet,
-    Neo4jDataSet,
-    Dataset_T,
-)
 
+from dataset import (CassandraDataSet, Dataset_T, InfluxDataSet, MongoDataSet,
+                     Neo4jDataSet)
 
 DATASETS: dict[str, Dataset_T] = {
     "mongo": MongoDataSet,
@@ -17,3 +12,5 @@ DATASETS: dict[str, Dataset_T] = {
 
 if __name__ == "__main__":
     obj = DATASETS[argv[1]]()
+    obj.process_data()
+    obj.close()
