@@ -35,7 +35,7 @@ def find_in_json_object(
     result: list[list[Any]] = jmespath.search(expression, json_obj)
 
     # return only values that are valid
-    return [tuple(values) for values in result if None not in values]
+    return [(values) for values in result if None not in values]
 
 
 class DataSet(Protocol):
