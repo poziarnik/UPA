@@ -10,6 +10,9 @@ venv:
 	python3 -m venv venv
 	$(ACTIVATE) && pip3 install -r requirements.txt
 
+update-venv:
+	$(ACTIVATE) && pip3 install -r requirements.txt
+
 run-mongo:
 	$(call run,mongo)
 
