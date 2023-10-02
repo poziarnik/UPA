@@ -44,19 +44,15 @@ class Neo4jDataSet(DataSet):
         self.driver.close()
 
     def process_data(self) -> None:
-        # self.__add_stop("Cervinkova", 0, "12", 1)
-        # self.__add_stop("Skacelova", 1, "12", 1)
-        # self.__add_stop("Cervinkova", 1, "12", 0)
-        # self.__add_stop("Skacelova", 0, "12", 0)
-        # self.__add_stop("Skacelova", 0, "44", 5)
-
         # download public transport stops and routes
         mhd_stops = download_geojson(
-            "https://data.brno.cz/datasets/mestobrno::zast%C3%A1vky-mhd-public-transport-stops.geojson?where=1=1&outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
+            "https://data.brno.cz/datasets/mestobrno::zast%C3%A1vky-mhd-public-transport-stops.geojson"
+            "?where=1=1&outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
         )
 
         mhd_routes = download_geojson(
-            "https://data.brno.cz/datasets/mestobrno::veden%C3%AD-linek-mhd-public-transit-routes.geojson?where=1=1&outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
+            "https://data.brno.cz/datasets/mestobrno::veden%C3%AD-linek-mhd-public-transit-routes.geojson"
+            "?where=1=1&outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
         )
 
         # loop through transport routes
