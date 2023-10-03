@@ -1,4 +1,3 @@
-from pprint import pprint
 from typing import Any, Protocol, TypeVar
 
 import jmespath
@@ -10,7 +9,7 @@ def download_data(url: str) -> requests.Response:
 
     if response.status_code != 200:
         raise RuntimeError("Unable to download data!")
-    
+
     return response
 
 
