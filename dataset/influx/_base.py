@@ -1,9 +1,34 @@
-from typing import Any, Callable
+import csv
+from enum import Enum
+from typing import Any
 
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-from .. import DataSet, download_geojson
+from .. import DataSet, download_data
+
+
+def get_number(value: Any):
+    try:
+        return float(value)
+    except ValueError:
+        return None
+
+
+class Header(Enum):
+    CODE = 3
+    NAME = 4
+    OWNER = 5
+    LAT = 6
+    LON = 7
+    TIME = 8
+    so2_1h = 9
+    no2_1h = 10
+    co_8h = 11
+    pm10_1h = 12
+    o3_1h = 13
+    pm10_24h = 14
+    pm2_5_1h = 15
 
 
 class InfluxDataSet(DataSet):
@@ -33,46 +58,44 @@ class InfluxDataSet(DataSet):
         self.client.close()
 
     def process_data(self) -> None:
-        data = download_geojson(
-            "https://data.brno.cz/datasets/mestobrno::kvalita-ovzdu%C5%A1%C3%AD-air-quality.geojson?"
+        data = download_data(
+            "https://data.brno.cz/datasets/mestobrno::kvalita-ovzdu%C5%A1%C3%AD-air-quality.csv?"
             "where=1=1&outSR=%7B%22wkid%22%3A4326%7D"
-        )
+        ).content.decode("utf-8")
 
-        get_values: Callable[
-            [dict[str, Any], list[str]], dict[str, Any]
-        ] = lambda row, keys: {key: row[key] for key in keys if row[key] != "null"}
+        data = csv.reader(data.splitlines(), delimiter=",")
+        _ = next(data)
 
         air_quality = (
             {
                 "measurement": self.MEASUREMENT,
-                "tags": get_values(
-                    row["properties"], ["code", "name", "owner", "lat", "lon"]
-                ),
-                "time": get_values(row["properties"], ["actualized"])["actualized"],
-                "fields": get_values(
-                    row["properties"],
-                    [
-                        "so2_1h",
-                        "no2_1h",
-                        "co_8h",
-                        "pm10_1h",
-                        "o3_1h",
-                        "pm10_24h",
-                        "pm2_5_1h",
-                    ],
-                ),
+                "tags": {
+                    "code": row[Header.CODE.value],
+                    "name": row[Header.NAME.value],
+                    "owner": row[Header.OWNER.value],
+                    "lat": float(row[Header.LAT.value]),
+                    "lon": float(row[Header.LON.value]),
+                },
+                "time": row[Header.TIME.value],
+                "fields": {
+                    Header(index).name: x
+                    for index, value in enumerate(row)
+                    if index
+                    in (
+                        Header.so2_1h.value,
+                        Header.no2_1h.value,
+                        Header.co_8h.value,
+                        Header.pm10_1h.value,
+                        Header.o3_1h.value,
+                        Header.pm10_24h.value,
+                        Header.pm2_5_1h.value,
+                    )
+                    and (x := get_number(value))
+                },
             }
-            for row in data["features"]
+            for row in data
         )
 
+        print(next(air_quality))
+
         self.write_api.write(bucket=self.BUCKET, org=self.ORG, record=air_quality)
-
-    def request_data(self) -> Any:
-        q = """
-            from(bucket: influx-bucket)
-            |> range(start: -5m, stop: now())
-        """
-
-        tables = self.query_api.query(query=q)
-
-        return {table: [row for row in table] for table in tables}
