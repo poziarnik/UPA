@@ -3,7 +3,7 @@ from time import sleep
 from cassandra.cluster import (Cluster, DriverException, NoHostAvailable,
                                Session)
 
-from .. import DataSet, download_geojson, find_in_json_object
+from .. import DataSet, download_json, find_in_json_object
 import uuid
 
 
@@ -22,6 +22,7 @@ class CassandraDataSet(DataSet):
         
         self.processData()
 
+        print("hi")
         self.session.shutdown()
 
         
@@ -49,8 +50,8 @@ class CassandraDataSet(DataSet):
         
         create_table_query = """
         CREATE TABLE IF NOT EXISTS accidents (
-            accident_id UUID PRIMARY KEY,
-            datum TEXT,
+            accident_id UUID,
+            datum TIMESTAMP,
             zavineni TEXT,
             viditelnost TEXT,
             situovani TEXT,
@@ -58,13 +59,14 @@ class CassandraDataSet(DataSet):
             alkohol_vinik TEXT,
             nasledky TEXT,
             pricina TEXT,
-            smrt INT
+            smrt BIGINT,
+            PRIMARY KEY(smrt, alkohol)
         )
         """
         self.session.execute(create_table_query)
 
         
-        traffic_accidents = download_geojson(
+        traffic_accidents = download_json(
             "https://opendata.arcgis.com/api/v3/datasets/298c37feb1064873abdccdc2a10b605f_0/downloads/data?format=geojson&spatialRefId=4326&where=1%3D1"
         )
 

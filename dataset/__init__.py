@@ -1,4 +1,4 @@
-from ._base import DataSet, Dataset_T, download_geojson, find_in_json_object, download_data
+from ._base import DataSet, Dataset_T, download_geojson, find_in_json_object, download_data, download_json
 from .cassandra import CassandraDataSet
 from .influx import InfluxDataSet
 from .mongo import MongoDataSet
@@ -12,6 +12,7 @@ __all__ = (
     "InfluxDataSet",
     "Neo4jDataSet",
     "download_geojson",
+    "download_json",
     "find_in_json_object",
     "download_data",
 )

@@ -10,12 +10,24 @@ def download_data(url: str) -> requests.Response:
 
     if response.status_code != 200:
         raise RuntimeError("Unable to download data!")
-    
+
     return response
 
-
 def download_geojson(url: str) -> dict[str, Any]:
-    return download_data(url).json()
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        raise RuntimeError("Unable to download data!")
+
+    return response.json()
+
+def download_json(url: str) -> dict[str, Any]:
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        raise RuntimeError("Unable to download data!")
+
+    return response.json()
 
 
 # https://github.com/Ades551/flight-record/blob/main/backend/threads/spokendata.py#L24
