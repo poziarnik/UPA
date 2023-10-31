@@ -1,4 +1,3 @@
-from pprint import pprint
 from typing import Any, Protocol, TypeVar
 
 import jmespath
