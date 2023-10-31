@@ -1,7 +1,8 @@
-from pymongo import MongoClient, errors
-from .. import DataSet, download_data
 import csv
-from io import StringIO
+
+from pymongo import MongoClient, errors
+
+from .. import DataSet, download_data
 
 HOSTNAME = "localhost"
 PORT = 27017
@@ -27,9 +28,9 @@ class MongoDataSet(DataSet):
         content = download_data(
             "https://data.brno.cz/datasets/mestobrno::odpadkov%C3%A9-ko%C5%A1e-litter-bins.csv?"
             "where=1=1&outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
-        ).text
+        ).content.decode("utf-8")
 
-        reader = csv.reader(StringIO(content), delimiter=",")
+        reader = csv.reader(content.splitlines(), delimiter=",")
         header = next(reader)
 
         bin_data = (

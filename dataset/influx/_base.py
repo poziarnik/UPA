@@ -96,6 +96,4 @@ class InfluxDataSet(DataSet):
             for row in data
         )
 
-        print(next(air_quality))
-
         self.write_api.write(bucket=self.BUCKET, org=self.ORG, record=air_quality)
